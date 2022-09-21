@@ -1,0 +1,83 @@
+service: aws-toddlyy-backend
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.8
+  region: ap-south-1
+  profile: serverless-admin
+  stage: dev
+  timeout: 10
+  memorySize: 128
+  environment:
+    REGION_NAME: ${self:provider.region}
+    DYNAMODB_TABLE: ${self:custom.dynamoTable}
+
+  
+  iam:
+    role:
+      statements:
+        - Effect: 'Allow'
+          Resource: '*'
+          Action: '*'
+        - Effect: 'Allow'
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:DescribeTable
+          Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+
+#table name below is used everywhere as a variable
+custom:
+  dynamoTable: parentuser-table
+  pythonRequirements:
+    dockerizePip: true
+
+functions:
+  get_user:
+    handler: handler.get_user
+    events:
+      - http:
+          path: /getuser/{parent_id}
+          method: get
+          cors: true
+  create_user:
+    handler: handler.create_user
+    events:
+      - http:
+          path: /createuser
+          method: post
+          cors: true
+  # delete_user:
+  #   handler: handler.delete_user
+  #   events:
+  #     - httpApi:
+  #         path: /deleteuser/{parent_id}
+  #         method: delete
+  #         cors: true
+
+#creates the table in dynamoDB
+resources:
+  Resources:
+    userTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        AttributeDefinitions:
+          - AttributeName: parent_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: parent_id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1     
+  
+plugins:
+  - serverless-python-requirements
+
+            

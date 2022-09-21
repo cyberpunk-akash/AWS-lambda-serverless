@@ -1,0 +1,71 @@
+Serverless: CLI tool(helps us to things through CLI instead of manually doing it
+sudo npm install -g serverless
+
+Create user in AWS and copy access and secret key
+
+serverless config credentials --provider aws --key <> --secret <> --profile serverless-admin
+
+sls/serverless : to list all serverless image options
+
+sls deploy -r ap-south-1
+
+sls deploy -r ap-south-1 -f hello
+
+sls invoke -f hello
+
+sls invoke -f hello --log
+
+sls logs -f hello
+
+sls remove
+
+sls plugin install -n serverless-python-requirements
+
+Event: Anything that triggers a lambda function to execute(for eg. A HTTP request through API Gateway)
+Services: The whole project/file which contains multiple lambda functions
+REsources: Any component of AWS that is associated with the lambda function(for eg. S3)
+
+IAM: Identity and Access Management
+
+boto: library in python to access AWS components(which are basically APIs)
+
+VPC: Virtual Private Cloud(made of subnets)
+Lambda functions are not by default launched in a VPC but we can do that to securely access EC2, RDS etc instances in a VPC
+
+AWS Toolkit:
+Cltrl+Shift+P>>Choose AWS profile
+(or)
+Create Lambda SAM application
+
+For installing AWS CLI:
+https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+
+aws configure(on terminal) : type in access and secret keys
+
+Do Step 4 in this to install SAM: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install-linux.html
+
+Install Docker Desktop to run lambda functions locally using CLI
+https://docs.docker.com/desktop/install/ubuntu/
+
+sam build
+sudo sam local invoke(docker up)
+sam deploy --guided
+curl <url> to check response
+sudo sam local start-api -p 8080(use the port flag only when default port=3000 is active)
+
+Killing process at 3000:
+sudo lsof -i:3000
+sudo kill -9 <pid from above command>
+
+Invoke lambda function separately:
+sudo sam local invoke "HelloWorldFunction" -e events/event.json
+-e : events(inputs the json file as test case)
+HelloWorldFunction present in resources in yaml file
+
+aws cloudformation delete-stack --stack-name sam-hello -r ap-south-1
+(to see stack and region, you can refer samconfig.toml
+
+conda activate aws-backend
+
+
+sls plugin install -n serverless-python-requirements
